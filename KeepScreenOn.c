@@ -5,25 +5,28 @@
       gcc -m32 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,65536 -mwindows -o KeepScreenOn32.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
 
     GCC (MinGW‑w64) – 64‑bit:
-      gcc -m64 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,65536 -mwindows -o KeepScreenOn64.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
+      gcc -m64 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,8192 -mwindows -o KeepScreenOn64.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
 
-    MSVC – 32‑bit (x86 Native Tools Command Prompt):
-      cl /Os /GS- /NODEFAULTLIB /FeKeepScreenOn32.exe KeepScreenOn.c /link /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup kernel32.lib user32.lib gdi32.lib
+    GCC (MinGW‑w64) – 32‑bit (requires 32-bit MinGW package):
+      gcc -m32 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,8192 -mwindows -o KeepScreenOn32.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
 
     MSVC – 64‑bit (x64 Native Tools Command Prompt):
-      cl /Os /GS- /NODEFAULTLIB /FeKeepScreenOn64.exe KeepScreenOn.c /link /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup kernel32.lib user32.lib gdi32.lib
+      cl /Os /GS- /NODEFAULTLIB /FeKeepScreenOn64.exe KeepScreenOn.c /link /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup /STACK:8192 kernel32.lib user32.lib gdi32.lib
 
-    Clang (MinGW target) – 32‑bit:
-      clang -m32 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,65536 -mwindows -o KeepScreenOn32.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
+    MSVC – 32‑bit (x86 Native Tools Command Prompt):
+      cl /Os /GS- /NODEFAULTLIB /FeKeepScreenOn32.exe KeepScreenOn.c /link /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup /STACK:8192 kernel32.lib user32.lib gdi32.lib
 
     Clang (MinGW target) – 64‑bit:
-      clang -m64 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,65536 -mwindows -o KeepScreenOn64.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
+      clang -m64 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,8192 -mwindows -o KeepScreenOn64.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
 
-    Clang‑CL (MSVC‑compatible, x86 environment):
-      clang-cl /Os /GS- /NODEFAULTLIB /FeKeepScreenOn32.exe KeepScreenOn.c /link /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup kernel32.lib user32.lib gdi32.lib
+    Clang (MinGW target) – 32‑bit:
+      clang -m32 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,8192 -mwindows -o KeepScreenOn32.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
 
     Clang‑CL (MSVC‑compatible, x64 environment):
-      clang-cl /Os /GS- /NODEFAULTLIB /FeKeepScreenOn64.exe KeepScreenOn.c /link /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup kernel32.lib user32.lib gdi32.lib
+      clang-cl /Os /GS- /NODEFAULTLIB /FeKeepScreenOn64.exe KeepScreenOn.c /link /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup /STACK:8192 kernel32.lib user32.lib gdi32.lib
+
+    Clang‑CL (MSVC‑compatible, x86 environment):
+      clang-cl /Os /GS- /NODEFAULTLIB /FeKeepScreenOn32.exe KeepScreenOn.c /link /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup /STACK:8192 kernel32.lib user32.lib gdi32.lib
 */
 // richie‑rich90454 2026
 
@@ -151,6 +154,7 @@ void __stdcall WinMainCRTStartup(void){
     }
     ShowWindow(main_window, SW_SHOWDEFAULT);
     UpdateWindow(main_window);
+    SetProcessWorkingSetSize(GetCurrentProcess(), (SIZE_T)-1, (SIZE_T)-1);
     MSG message;
     while (GetMessage(&message, NULL, 0, 0)){
         TranslateMessage(&message);
