@@ -1,0 +1,71 @@
+# Compiled executable
+*.exe
+*.com
+
+# Object files
+*.o
+*.obj
+
+# Libraries
+*.lib
+*.dll
+*.a
+*.so
+
+# Linker files
+*.exp
+*.ilk
+*.pdb
+*.res
+
+# Visual Studio
+*.sln
+*.suo
+*.user
+*.vs
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.opendb
+*.db
+*.sdf
+*.opensdf
+*.aps
+*.ncb
+*.opt
+*.plg
+*.msi
+*.msp
+*.wixpdb
+*.wixobj
+*.cache
+
+# Build folders
+Debug/
+Release/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+build/
+out/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Precompiled headers
+*.pch
+*.gch
+
+# Profiling
+*.pgd
+*.pgc
