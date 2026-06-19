@@ -1,17 +1,29 @@
 /*
-    Compile commands (extreme low memory, no CRT):
+    Compile commands (extreme low memory, no CRT, Windows 95+ safe):
 
-    GCC (MinGW‑w64):
-      gcc -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,65536 -mwindows -o KeepScreenOn.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
+    GCC (MinGW‑w64) – 32‑bit:
+      gcc -m32 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,65536 -mwindows -o KeepScreenOn32.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
 
-    MSVC (Developer Command Prompt):
-      cl /Os /GS- /NODEFAULTLIB /FeKeepScreenOn.exe KeepScreenOn.c /link /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup kernel32.lib user32.lib gdi32.lib
+    GCC (MinGW‑w64) – 64‑bit:
+      gcc -m64 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,65536 -mwindows -o KeepScreenOn64.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
 
-    Clang (MinGW target):
-      clang -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,65536 -mwindows -o KeepScreenOn.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
+    MSVC – 32‑bit (x86 Native Tools Command Prompt):
+      cl /Os /GS- /NODEFAULTLIB /FeKeepScreenOn32.exe KeepScreenOn.c /link /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup kernel32.lib user32.lib gdi32.lib
 
-    Clang‑CL (MSVC‑compatible, from Visual Studio environment):
-      clang-cl /Os /GS- /NODEFAULTLIB /FeKeepScreenOn.exe KeepScreenOn.c /link /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup kernel32.lib user32.lib gdi32.lib
+    MSVC – 64‑bit (x64 Native Tools Command Prompt):
+      cl /Os /GS- /NODEFAULTLIB /FeKeepScreenOn64.exe KeepScreenOn.c /link /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup kernel32.lib user32.lib gdi32.lib
+
+    Clang (MinGW target) – 32‑bit:
+      clang -m32 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,65536 -mwindows -o KeepScreenOn32.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
+
+    Clang (MinGW target) – 64‑bit:
+      clang -m64 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,65536 -mwindows -o KeepScreenOn64.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
+
+    Clang‑CL (MSVC‑compatible, x86 environment):
+      clang-cl /Os /GS- /NODEFAULTLIB /FeKeepScreenOn32.exe KeepScreenOn.c /link /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup kernel32.lib user32.lib gdi32.lib
+
+    Clang‑CL (MSVC‑compatible, x64 environment):
+      clang-cl /Os /GS- /NODEFAULTLIB /FeKeepScreenOn64.exe KeepScreenOn.c /link /SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup kernel32.lib user32.lib gdi32.lib
 */
 // richie‑rich90454 2026
 
@@ -20,15 +32,17 @@ static BOOL screen_is_on=FALSE;
 static HWND button_handle=NULL;
 static HWND status_handle=NULL;
 static HWND credit_handle=NULL;
+typedef DWORD (WINAPI *PSetThreadExecutionState)(DWORD);
+static PSetThreadExecutionState pSetThreadExecutionState=NULL;
 void ToggleScreenOn(HWND parent_window){
     if (screen_is_on){
-        SetThreadExecutionState(ES_CONTINUOUS);
+        if (pSetThreadExecutionState) pSetThreadExecutionState(ES_CONTINUOUS);
         screen_is_on=FALSE;
         SetWindowText(button_handle, "Turn On");
         SetWindowText(status_handle, "Status: Off");
     }
     else{
-        SetThreadExecutionState(ES_DISPLAY_REQUIRED|ES_SYSTEM_REQUIRED|ES_CONTINUOUS);
+        if (pSetThreadExecutionState) pSetThreadExecutionState(ES_DISPLAY_REQUIRED|ES_SYSTEM_REQUIRED|ES_CONTINUOUS);
         screen_is_on=TRUE;
         SetWindowText(button_handle, "Turn Off");
         SetWindowText(status_handle, "Status: On");
@@ -100,7 +114,7 @@ LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message, WPARAM w_para
         }
         break;
     case WM_DESTROY:
-        SetThreadExecutionState(ES_CONTINUOUS);
+        if (pSetThreadExecutionState) pSetThreadExecutionState(ES_CONTINUOUS);
         PostQuitMessage(0);
         break;
     default:
@@ -110,6 +124,10 @@ LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message, WPARAM w_para
 }
 void __stdcall WinMainCRTStartup(void){
     const char WINDOW_CLASS_NAME[]="ScreenAwakeClass";
+    HMODULE kernel32=GetModuleHandleA("kernel32.dll");
+    if (kernel32){
+        pSetThreadExecutionState=(PSetThreadExecutionState)GetProcAddress(kernel32, "SetThreadExecutionState");
+    }
     HINSTANCE current_instance=GetModuleHandleA(NULL);
     WNDCLASS window_class={0};
     window_class.lpfnWndProc=WindowProcedure;
