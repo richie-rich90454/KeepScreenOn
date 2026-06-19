@@ -1,13 +1,10 @@
 /*
-    Compile commands (extreme low memory, no CRT, Windows 95+ safe):
-
-    GCC (MinGW‑w64) – 32‑bit:
-      gcc -m32 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,65536 -mwindows -o KeepScreenOn32.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
+    Compile commands (extreme low memory, no CRT, Windows 95+ fully functional):
 
     GCC (MinGW‑w64) – 64‑bit:
       gcc -m64 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,8192 -mwindows -o KeepScreenOn64.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
 
-    GCC (MinGW‑w64) – 32‑bit (requires 32-bit MinGW package):
+    GCC (MinGW‑w64) – 32‑bit (requires i686 MinGW package):
       gcc -m32 -Os -nostdlib -e WinMainCRTStartup -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--stack,8192 -mwindows -o KeepScreenOn32.exe KeepScreenOn.c -lkernel32 -luser32 -lgdi32
 
     MSVC – 64‑bit (x64 Native Tools Command Prompt):
@@ -37,15 +34,39 @@ static HWND status_handle=NULL;
 static HWND credit_handle=NULL;
 typedef DWORD (WINAPI *PSetThreadExecutionState)(DWORD);
 static PSetThreadExecutionState pSetThreadExecutionState=NULL;
+static BOOL legacy_original_screensaver_active=TRUE;
+static BOOL legacy_original_lowpower_active=TRUE;
+static BOOL legacy_original_poweroff_active=TRUE;
+static UINT legacy_original_screensaver_timeout=0;
 void ToggleScreenOn(HWND parent_window){
     if (screen_is_on){
-        if (pSetThreadExecutionState) pSetThreadExecutionState(ES_CONTINUOUS);
+        if (pSetThreadExecutionState){
+            pSetThreadExecutionState(ES_CONTINUOUS);
+        }
+        else{
+            SystemParametersInfoA(SPI_SETSCREENSAVEACTIVE, legacy_original_screensaver_active, NULL, 0);
+            SystemParametersInfoA(SPI_SETLOWPOWERACTIVE, legacy_original_lowpower_active, NULL, 0);
+            SystemParametersInfoA(SPI_SETPOWEROFFACTIVE, legacy_original_poweroff_active, NULL, 0);
+            SystemParametersInfoA(SPI_SETSCREENSAVETIMEOUT, legacy_original_screensaver_timeout, NULL, 0);
+        }
         screen_is_on=FALSE;
         SetWindowText(button_handle, "Turn On");
         SetWindowText(status_handle, "Status: Off");
     }
     else{
-        if (pSetThreadExecutionState) pSetThreadExecutionState(ES_DISPLAY_REQUIRED|ES_SYSTEM_REQUIRED|ES_CONTINUOUS);
+        if (pSetThreadExecutionState){
+            pSetThreadExecutionState(ES_DISPLAY_REQUIRED|ES_SYSTEM_REQUIRED|ES_CONTINUOUS);
+        }
+        else{
+            SystemParametersInfoA(SPI_GETSCREENSAVEACTIVE, 0, &legacy_original_screensaver_active, 0);
+            SystemParametersInfoA(SPI_GETLOWPOWERACTIVE, 0, &legacy_original_lowpower_active, 0);
+            SystemParametersInfoA(SPI_GETPOWEROFFACTIVE, 0, &legacy_original_poweroff_active, 0);
+            SystemParametersInfoA(SPI_GETSCREENSAVETIMEOUT, 0, &legacy_original_screensaver_timeout, 0);
+            SystemParametersInfoA(SPI_SETSCREENSAVEACTIVE, FALSE, NULL, 0);
+            SystemParametersInfoA(SPI_SETLOWPOWERACTIVE, FALSE, NULL, 0);
+            SystemParametersInfoA(SPI_SETPOWEROFFACTIVE, FALSE, NULL, 0);
+            SystemParametersInfoA(SPI_SETSCREENSAVETIMEOUT, 0, NULL, 0);
+        }
         screen_is_on=TRUE;
         SetWindowText(button_handle, "Turn Off");
         SetWindowText(status_handle, "Status: On");
@@ -117,7 +138,17 @@ LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message, WPARAM w_para
         }
         break;
     case WM_DESTROY:
-        if (pSetThreadExecutionState) pSetThreadExecutionState(ES_CONTINUOUS);
+        if (screen_is_on){
+            if (pSetThreadExecutionState){
+                pSetThreadExecutionState(ES_CONTINUOUS);
+            }
+            else{
+                SystemParametersInfoA(SPI_SETSCREENSAVEACTIVE, legacy_original_screensaver_active, NULL, 0);
+                SystemParametersInfoA(SPI_SETLOWPOWERACTIVE, legacy_original_lowpower_active, NULL, 0);
+                SystemParametersInfoA(SPI_SETPOWEROFFACTIVE, legacy_original_poweroff_active, NULL, 0);
+                SystemParametersInfoA(SPI_SETSCREENSAVETIMEOUT, legacy_original_screensaver_timeout, NULL, 0);
+            }
+        }
         PostQuitMessage(0);
         break;
     default:
