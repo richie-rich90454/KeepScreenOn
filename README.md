@@ -4,6 +4,8 @@ A minimal, standalone Windows utility that stops the display from turning off
 and prevents the system from sleeping. Written in plain C using only the
 Windows API. No browser, no runtime, no heavy dependencies.
 
+![KeepScreenOn demo](demo.gif)
+
 ## Why KeepScreenOn?
 
 Most “keep awake” tools run inside a web browser, consume hundreds of
