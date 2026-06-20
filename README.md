@@ -1,5 +1,16 @@
 # KeepScreenOn – Prevent Windows Sleep & Keep Screen Awake
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+[![Language: C](https://img.shields.io/badge/Language-C-555555?style=for-the-badge&logo=c)](https://en.wikipedia.org/wiki/C_(programming_language))
+[![Platform: Windows 95+](https://img.shields.io/badge/Platform-Windows_95%2B-0078D6?style=for-the-badge&logo=windows)](https://www.microsoft.com/windows)
+[![CRT‑free](https://img.shields.io/badge/CRT‑free-000000?style=for-the-badge)](https://en.wikipedia.org/wiki/Crt0)
+[![No Dependencies](https://img.shields.io/badge/Dependencies-None-4c1?style=for-the-badge)](https://github.com/richie-rich90454/KeepScreenOn)
+[![Minimal Memory](https://img.shields.io/badge/Memory-Extremely_Low-9cf?style=for-the-badge)](https://github.com/richie-rich90454/KeepScreenOn)
+[![Build: GCC/MSVC/Clang](https://img.shields.io/badge/Build-GCC_%7C_MSVC_%7C_Clang-6f42c1?style=for-the-badge)](https://github.com/richie-rich90454/KeepScreenOn)
+[![Zero Network](https://img.shields.io/badge/Network-None-critical?style=for-the-badge)](https://github.com/richie-rich90454/KeepScreenOn)
+[![Open Source](https://img.shields.io/badge/Open_Source-❤-ff69b4?style=for-the-badge)](https://opensource.org)
+[![Made in 2026](https://img.shields.io/badge/Made_in-2026-1f425f?style=for-the-badge)](https://github.com/richie-rich90454/KeepScreenOn)
+
 A minimal, standalone Windows utility that stops the display from turning off
 and prevents the system from sleeping. Written in plain C using only the
 Windows API. No browser, no runtime, no heavy dependencies.
