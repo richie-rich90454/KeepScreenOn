@@ -1,10 +1,9 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report a problem with KeepScreenOn
 title: ''
-labels: ''
+labels: bug
 assignees: ''
-
 ---
 
 **Describe the bug**
@@ -12,27 +11,21 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+1. Launch `KeepScreenOn.exe`.
+2. Click the button / resize the window / etc.
+3. Observe the incorrect behavior.
 
 **Expected behavior**
-A clear and concise description of what you expected to happen.
+What you expected to happen instead.
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
+If applicable, add screenshots to help explain the problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+**Environment:**
+ - Windows version (e.g. Windows 10 22H2, Windows 95, Windows 11)
+ - KeepScreenOn binary: 32‑bit or 64‑bit
+ - How you built it (compiler and exact command used), or if you used a pre‑compiled release
+ - If built locally: compiler name and version (e.g. MinGW‑w64 15.2.0, MSVC 2022)
 
 **Additional context**
-Add any other context about the problem here.
+Add any other details, such as whether the bug occurs with both the CRT‑free and normal build, or if it only happens after resizing the window.
