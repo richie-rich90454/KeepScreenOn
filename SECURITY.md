@@ -13,11 +13,11 @@ security patches. Older commits receive no guarantees.
 
 ## Reporting a Vulnerability
 
-To report a suspected security vulnerability, please open a private issue at
-[github.com/YOUR-USERNAME/KeepScreenOn/security/advisories](https://github.com/YOUR-USERNAME/KeepScreenOn/security/advisories)
-or send an email to **your‑email@example.com** (replace with your actual
-contact). Expect an initial response within 72 hours and a detailed assessment
-within 7 days.
+To report a suspected security vulnerability, please open a private advisory at  
+[github.com/richie-rich90454/KeepScreenOn/security/advisories](https://github.com/richie-rich90454/KeepScreenOn/security/advisories)  
+or send an email to [richard@richardsblogs.com](mailto:richard@richardsblogs.com).  
+Expect an initial response within one week and a detailed assessment within
+two weeks.
 
 ## What to Expect
 
